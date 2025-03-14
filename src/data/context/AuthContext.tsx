@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase"; // Importando a instância do Firebase au
 import { signInWithPopup, GoogleAuthProvider, User, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth"; // Importando funções de autenticação
 import Cookies from 'js-cookie';
 import Usuario from "@/model/Usuario"; // Certifique-se de que o modelo de usuário está correto
+import { FirebaseError } from "firebase/app";
 
 interface AuthContextProps {
     usuario?: Usuario | null;
@@ -79,30 +80,69 @@ export function AuthProvider({ children }: AuthContextProps) {
     }
     async function login(email: string, senha: string) {
         try {
-            setCarregando(true)
-            const result = await signInWithEmailAndPassword(auth, email, senha)
-            configurarSessao(result.user)
-            router.push('/')
-            console.log("Usuário logado:", result.user)
+            setCarregando(true);
+
+            // Tentando realizar o login
+            const result = await signInWithEmailAndPassword(auth, email, senha);
+
+            if (result.user) {
+                // Login bem-sucedido, configurando a sessão
+                configurarSessao(result.user);
+                router.push('/');
+                console.log("Usuário logado:", result.user);
+            } else {
+                // Se o usuário não for encontrado, lançamos um erro
+                throw new Error("Usuário não encontrado.");
+            }
         } catch (error) {
-            console.error("Erro ao autenticar com Google:", error)
+            // Caso o login falhe, atualizamos o erro
+            console.error("Erro ao autenticar:", error);
+            throw error;  // Relança o erro para ser capturado no `submeter`
         } finally {
-            setCarregando(false)
+            setCarregando(false); // Finaliza o carregamento
         }
     }
+
     async function cadastrar(email: string, senha: string) {
         try {
-            setCarregando(true)
-            const result = await createUserWithEmailAndPassword(auth, email, senha)
-            configurarSessao(result.user)
-            router.push('/')
-            console.log("Usuário logado:", result.user)
-        } catch (error) {
-            console.error("Erro ao autenticar com Google:", error)
+            setCarregando(true);
+    
+            // Tentando criar um usuário com o e-mail e a senha fornecidos
+            const result = await createUserWithEmailAndPassword(auth, email, senha);
+    
+            // Configurando a sessão do usuário após o cadastro bem-sucedido
+            configurarSessao(result.user);
+            router.push('/');
+            console.log("Usuário logado:", result.user);
+        } catch (error: unknown) {
+            // Verificando se o erro é do tipo FirebaseError
+            if (error instanceof FirebaseError) {
+                // Tratando o erro específico de senha fraca
+                if (error.code === 'auth/weak-password') {
+                    console.error("Erro ao cadastrar: Senha fraca.");
+                    throw new Error("A senha deve ter pelo menos 6 caracteres.");
+                }
+    
+                // Tratamento para o caso de e-mail já estar em uso
+                if (error.code === 'auth/email-already-in-use') {
+                    console.error("Erro ao cadastrar: E-mail já está em uso.");
+                    throw new Error("Este e-mail já está em uso. Tente outro.");
+                }
+    
+                // Tratamento para outros erros de autenticação
+                console.error("Erro ao autenticar:", error.message);
+                throw new Error("Ocorreu um erro ao tentar cadastrar. Tente novamente.");
+            } else {
+                // Caso o erro não seja do tipo FirebaseError, fornecemos uma mensagem genérica
+                console.error("Erro desconhecido:", error);
+                throw new Error("Erro desconhecido durante o cadastro.");
+            }
         } finally {
-            setCarregando(false)
+            // Finaliza o carregamento
+            setCarregando(false);
         }
     }
+    
 
     function gerenciarCookie(logado: boolean) {
         if (logado) {

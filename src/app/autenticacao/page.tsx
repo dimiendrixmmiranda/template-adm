@@ -17,32 +17,33 @@ export default function Page() {
 
 
     async function submeter() {
-        if (!cadastrar) return
-
+        if (!cadastrar) return;
+    
         if (modo === "login") {
             if (email && senha) {
                 if (!login) {
-                    exibirErro("O login ainda não está disponível. Tente novamente mais tarde.");
-                    return;
+                    exibirErro("O login ainda não está disponível. Tente novamente mais tarde.")
+                    return
                 }
                 try {
-                    await login(email, senha); // Aguarda a execução do login
-                    console.log("Login realizado com sucesso");
+                    // Aguarda a execução do login e trata qualquer erro
+                    await login(email, senha)
+                    console.log("Login realizado com sucesso")
                 } catch (error) {
-                    console.error("Erro ao fazer login:", error);
-                    exibirErro("Ocorreu um erro no login. Verifique suas credenciais.");
+                    console.error("Erro ao fazer login:", error)
+                    exibirErro("Ocorreu um erro no login. Verifique suas credenciais.")
                 }
             } else {
-                exibirErro("Preencha todos os campos!");
+                exibirErro("Preencha todos os campos!")
             }
         } else {
-            if (email && senha) { // Correção do erro lógico
+            if (email && senha) {
                 try {
-                    await cadastrar(email, senha) // Aguarde a execução
+                    await cadastrar(email, senha)
                     console.log("Cadastro realizado com sucesso")
                 } catch (error) {
                     console.error("Erro ao cadastrar:", error)
-                    exibirErro("Ocorreu um erro no cadastro") // Exibe erro só se falhar
+                    exibirErro("Ocorreu um erro no cadastro")
                 }
             } else {
                 exibirErro("Preencha todos os campos!")
@@ -51,9 +52,11 @@ export default function Page() {
     }
 
 
+
     function exibirErro(msg: string, tempoEmSegundos: number = 5) {
-        setErro(msg)
-        setTimeout(() => setErro(null), tempoEmSegundos * 1000)
+        console.log("Erro definido:", msg); // Verifica se o erro foi atualizado
+        setErro(msg);
+        setTimeout(() => setErro(null), tempoEmSegundos * 1000);
     }
 
 
