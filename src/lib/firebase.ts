@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";  // Importando a função de autenticação da nova versão
+import { getAuth } from "firebase/auth";
 
-// Configuração do Firebase
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -9,10 +8,10 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+}
 
 // Inicializando o Firebase
-const app = initializeApp(firebaseConfig);  // Inicializa o Firebase com a configuração
-const auth = getAuth(app);  // Obtém a instância de autenticação
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
 
-export { auth };
+export { auth }

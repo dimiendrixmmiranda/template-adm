@@ -1,7 +1,7 @@
 'use client'
 import AuthInput from "@/components/autenticacao/AuthInput";
+import ImagemAleatoria from "@/components/imagemAleatoria/ImagemAleatoria";
 import useAuth from "@/data/hook/useAuth";
-import Image from "next/image";
 import { useState } from "react";
 import { CgDanger } from "react-icons/cg";
 import { FaGoogle } from "react-icons/fa";
@@ -59,13 +59,10 @@ export default function Page() {
 
     return (
         <div className="bg-zinc-200 text-black flex justify-center items-center w-screen h-screen md:grid md:grid-cols-2 lg:grid-cols-3">
-            <div className="relative w-full h-full overflow-hidden hidden md:flex lg:col-start-1 lg:col-end-3">
-                <Image src={'https://img.freepik.com/fotos-premium/foto-de-grande-angular-de-uma-unica-arvore-crescendo-sob-um-ceu-nublado-durante-um-por-do-sol-cercado-por-grama_181624-22807.jpg?semt=ais_hybrid'} alt="Imagem aleatória" fill className="object-cover"></Image>
-            </div>
+            <ImagemAleatoria></ImagemAleatoria>
 
-            <div className="w-full p-4">
+            <div className="w-full p-4 lg:p-8 lg:col-start-2 lg:col-end-4 xl:max-w-[800px] xl:mx-auto">
                 <h1 className="text-xl font-bold mb-5">{modo === 'login' ? 'Entre com sua conta' : 'Cadastre na plataforma'}</h1>
-
                 {
                     erro ? (
                         <div className="bg-red-400 text-white py-3 px-5 my-2 border border-red-700 rounded-lg flex items-center gap-2">
